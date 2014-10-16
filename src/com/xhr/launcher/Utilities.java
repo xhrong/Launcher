@@ -21,15 +21,7 @@ import android.content.ActivityNotFoundException;
 import android.content.Context;
 import android.content.Intent;
 import android.content.res.Resources;
-import android.graphics.Bitmap;
-import android.graphics.BlurMaskFilter;
-import android.graphics.Canvas;
-import android.graphics.ColorMatrix;
-import android.graphics.ColorMatrixColorFilter;
-import android.graphics.Matrix;
-import android.graphics.Paint;
-import android.graphics.PaintFlagsDrawFilter;
-import android.graphics.Rect;
+import android.graphics.*;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.graphics.drawable.PaintDrawable;
@@ -39,12 +31,15 @@ import android.view.View;
 import android.widget.Toast;
 
 import java.util.ArrayList;
+import java.util.Random;
 
 /**
  * Various utilities shared amongst the Launcher's classes.
  */
 final class Utilities {
     private static final String TAG = "Launcher.Utilities";
+
+    private static int bg_res_id[] = new int[]{R.drawable.icon_bg_blue, R.drawable.icon_bg_blue_g, R.drawable.icon_bg_gray, R.drawable.icon_bg_green, R.drawable.icon_bg_green_c, R.drawable.icon_bg_red};
 
     private static int sIconWidth = -1;
     private static int sIconHeight = -1;
@@ -62,7 +57,8 @@ final class Utilities {
         sCanvas.setDrawFilter(new PaintFlagsDrawFilter(Paint.DITHER_FLAG,
                 Paint.FILTER_BITMAP_FLAG));
     }
-    static int sColors[] = { 0xffff0000, 0xff00ff00, 0xff0000ff };
+
+    static int sColors[] = {0xffff0000, 0xff00ff00, 0xff0000ff};
     static int sColorIndex = 0;
 
     /**
@@ -112,6 +108,9 @@ final class Utilities {
      * Returns a bitmap suitable for the all apps view.
      */
     static Bitmap createIconBitmap(Drawable icon, Context context) {
+//        Bitmap backBitmap = BitmapFactory.decodeResource(context.getResources(),
+//                bg_res_id[new Random().nextInt(6)]);
+//        return generateIcon(icon,backBitmap,false);
         synchronized (sCanvas) { // we share the statics :-(
             if (sIconWidth == -1) {
                 initStatics(context);
@@ -145,16 +144,23 @@ final class Utilities {
             }
 
             // no intrinsic size --> use default size
-            int textureWidth = sIconTextureWidth;
-            int textureHeight = sIconTextureHeight;
+            int textureWidth = sIconTextureWidth * 3 / 2;
+            int textureHeight = sIconTextureHeight * 3 / 2;
+            final int left = (textureWidth - width) / 2;
+            final int top = (textureHeight - height) / 2;
 
             final Bitmap bitmap = Bitmap.createBitmap(textureWidth, textureHeight,
                     Bitmap.Config.ARGB_8888);
+
+
             final Canvas canvas = sCanvas;
             canvas.setBitmap(bitmap);
 
-            final int left = (textureWidth-width) / 2;
-            final int top = (textureHeight-height) / 2;
+            //给APP ICON添加背景图，仿ios效果   ----xhrong
+            Bitmap background = BitmapFactory.decodeResource(context.getResources(),
+                    bg_res_id[new Random().nextInt(6)]);
+            canvas.drawBitmap(background, new Rect(0, 0, background.getWidth(), background.getHeight()), new Rect(0, 0, textureWidth, textureHeight), null);
+
 
             @SuppressWarnings("all") // suppress dead code warning
             final boolean debug = false;
@@ -164,11 +170,12 @@ final class Utilities {
                 if (++sColorIndex >= sColors.length) sColorIndex = 0;
                 Paint debugPaint = new Paint();
                 debugPaint.setColor(0xffcccc00);
-                canvas.drawRect(left, top, left+width, top+height, debugPaint);
+                canvas.drawRect(left, top, left + width, top + height, debugPaint);
+
             }
 
             sOldBounds.set(icon.getBounds());
-            icon.setBounds(left, top, left+width, top+height);
+            icon.setBounds(left, top, left + width, top + height);
             icon.draw(canvas);
             icon.setBounds(sOldBounds);
             canvas.setBitmap(null);
@@ -180,11 +187,10 @@ final class Utilities {
     /**
      * Returns a Bitmap representing the thumbnail of the specified Bitmap.
      *
-     * @param bitmap The bitmap to get a thumbnail of.
+     * @param bitmap  The bitmap to get a thumbnail of.
      * @param context The application's context.
-     *
      * @return A thumbnail for the specified bitmap or the bitmap itself if the
-     *         thumbnail could not be created.
+     * thumbnail could not be created.
      */
     static Bitmap resampleIconBitmap(Bitmap bitmap, Context context) {
         synchronized (sCanvas) { // we share the statics :-(
@@ -205,14 +211,14 @@ final class Utilities {
      * Given a coordinate relative to the descendant, find the coordinate in a parent view's
      * coordinates.
      *
-     * @param descendant The descendant to which the passed coordinate is relative.
-     * @param root The root view to make the coordinates relative to.
-     * @param coord The coordinate that we want mapped.
+     * @param descendant        The descendant to which the passed coordinate is relative.
+     * @param root              The root view to make the coordinates relative to.
+     * @param coord             The coordinate that we want mapped.
      * @param includeRootScroll Whether or not to account for the scroll of the descendant:
-     *          sometimes this is relevant as in a child's coordinates within the descendant.
+     *                          sometimes this is relevant as in a child's coordinates within the descendant.
      * @return The factor by which this descendant is scaled relative to this DragLayer. Caution
-     *         this scale factor is assumed to be equal in X and Y, and so if at any point this
-     *         assumption fails, we will need to return a pair of scale factors.
+     * this scale factor is assumed to be equal in X and Y, and so if at any point this
+     * assumption fails, we will need to return a pair of scale factors.
      */
     public static float getDescendantCoordRelativeToParent(View descendant, View root,
                                                            int[] coord, boolean includeRootScroll) {
@@ -221,7 +227,7 @@ final class Utilities {
         float[] pt = {coord[0], coord[1]};
 
         View v = descendant;
-        while(v != root && v != null) {
+        while (v != root && v != null) {
             ancestorChain.add(v);
             v = (View) v.getParent();
         }
@@ -250,7 +256,7 @@ final class Utilities {
     }
 
     /**
-     * Inverse of {@link #getDescendantCoordRelativeToSelf(View, int[])}.
+     * Inverse of {@link #getDescendantCoordRelativeToSelf(android.view.View, int[])}.
      */
     public static float mapCoordInSelfToDescendent(View descendant, View root,
                                                    int[] coord) {
@@ -259,7 +265,7 @@ final class Utilities {
         float[] pt = {coord[0], coord[1]};
 
         View v = descendant;
-        while(v != root) {
+        while (v != root) {
             ancestorChain.add(v);
             v = (View) v.getParent();
         }
@@ -270,7 +276,7 @@ final class Utilities {
         int count = ancestorChain.size();
         for (int i = count - 1; i >= 0; i--) {
             View ancestor = ancestorChain.get(i);
-            View next = i > 0 ? ancestorChain.get(i-1) : null;
+            View next = i > 0 ? ancestorChain.get(i - 1) : null;
 
             pt[0] += ancestor.getScrollX();
             pt[1] += ancestor.getScrollY();

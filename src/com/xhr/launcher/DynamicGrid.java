@@ -526,7 +526,7 @@ public class DynamicGrid {
                 575, 904,  6, 6,  72, 14.4f,  7, 60));
         // Larger tablet profiles always have system bars on the top & bottom
         deviceProfiles.add(new DeviceProfile("Nexus 10",
-                727, 1207,  5, 8,  80, 14.4f,  9, 64));
+                727, 1207,  3, 5,  108, 14.4f,  9, 64));
         /*
         deviceProfiles.add(new DeviceProfile("Nexus 7",
                 600, 960,  5, 5,  72, 14.4f,  5, 60));

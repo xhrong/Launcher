@@ -27,7 +27,6 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
-import android.widget.Button;
 import android.widget.FrameLayout;
 import android.widget.TextView;
 
@@ -176,10 +175,6 @@ public class Hotseat extends FrameLayout {
             CellLayout.LayoutParams lp = new CellLayout.LayoutParams(x,y,1,1);
             lp.canReorder = false;
             mContent.addViewToCellLayout(allAppsButton, -1, 0, lp, true);
-
-            Button button=new Button(mContext);
-            button.setText("Test");
-            mContent.addViewToCellLayout(button,-2,0,lp,true);
         }
     }
 

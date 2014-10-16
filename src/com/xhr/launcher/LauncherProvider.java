@@ -130,6 +130,8 @@ public class LauncherProvider extends ContentProvider {
 
     private static long dbInsertAndCheck(DatabaseHelper helper,
             SQLiteDatabase db, String table, String nullColumnHack, ContentValues values) {
+        Log.e("APPID",values.getAsString(LauncherSettings.Favorites._ID));
+        Log.e("APPID",values.getAsString("title")==null?"NULL":values.getAsString("title"));
         if (!values.containsKey(LauncherSettings.Favorites._ID)) {
             throw new RuntimeException("Error: attempting to add item without specifying an id");
         }
@@ -1203,7 +1205,7 @@ public class LauncherProvider extends ContentProvider {
                 values.put(Favorites.ITEM_TYPE, Favorites.ITEM_TYPE_APPLICATION);
                 values.put(Favorites.SPANX, 1);
                 values.put(Favorites.SPANY, 1);
-                values.put(Favorites._ID, generateNewItemId());
+                values.put(Favorites._ID, id);
                 if (dbInsertAndCheck(this, db, TABLE_FAVORITES, null, values) < 0) {
                     return -1;
                 }

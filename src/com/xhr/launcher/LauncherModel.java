@@ -1508,7 +1508,7 @@ public class LauncherModel extends BroadcastReceiver {
             }
             if (!added.isEmpty()) {
                 Callbacks cb = mCallbacks != null ? mCallbacks.get() : null;
-                addAndBindAddedApps(context, added, cb, null);
+                addAndBindAddedApps(context, added, cb, new ArrayList<AppInfo>());
             }
         }
 
