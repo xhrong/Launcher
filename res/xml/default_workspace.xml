@@ -18,6 +18,7 @@
     <!-- Far-left screen [0] -->
 
     <!-- Left screen [1] -->
+
     <favorite
             launcher:packageName="com.android.settings"
             launcher:className="com.android.settings.widget.SettingsAppWidgetProvider"
@@ -36,9 +37,11 @@
             launcher:y="1" />
 
 
+
     <!-- Far-right screen [4] -->
 
     <!-- Hotseat (We use the screen as the position of the item in the hotseat) -->
+
 
     <favorite
             launcher:packageName="com.android.browser"

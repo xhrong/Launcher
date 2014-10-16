@@ -43,7 +43,6 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.os.Bundle;
-import android.os.Environment;
 import android.provider.Settings;
 import android.text.TextUtils;
 import android.util.AttributeSet;
@@ -65,7 +64,7 @@ public class LauncherProvider extends ContentProvider {
     private static final String TAG = "Launcher.LauncherProvider";
     private static final boolean LOGD = false;
 
-    private static final String DATABASE_NAME ="launcher.db";
+    private static final String DATABASE_NAME = "launcher.db";
 
     private static final int DATABASE_VERSION = 15;
 
